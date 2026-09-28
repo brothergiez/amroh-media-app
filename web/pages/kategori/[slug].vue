@@ -7,6 +7,7 @@
 
 <script setup lang="ts">
 import type { Category, Content } from "~/types";
+import { categoryLabel } from "~/utils/category";
 
 const route = useRoute();
 const config = useRuntimeConfig();
@@ -24,7 +25,7 @@ if (error.value) {
   });
 }
 
-const title = computed(() => data.value?.category.name || "Kategori");
+const title = computed(() => categoryLabel(data.value?.category.name) || "Kategori");
 
 useSeoMeta({
   title: () => `${title.value} · ${config.public.siteName}`,

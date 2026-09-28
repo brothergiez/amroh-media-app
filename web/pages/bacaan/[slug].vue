@@ -1,7 +1,7 @@
 <template>
   <main class="page reader">
     <header class="toolbar">
-      <NuxtLink :to="categoryLink" class="back">← {{ data?.category?.name || "Kembali" }}</NuxtLink>
+      <NuxtLink :to="categoryLink" class="back">← {{ categoryLabel(data?.category?.name) || "Kembali" }}</NuxtLink>
       <div class="tools">
         <button type="button" @click="fontSize = Math.max(1.1, Number(fontSize) - 0.1)">A-</button>
         <button type="button" @click="fontSize = Math.min(2.2, Number(fontSize) + 0.1)">A+</button>
@@ -32,12 +32,13 @@
 
 <script setup lang="ts">
 import type { Category, Content, ContentSection } from "~/types";
+import { categoryLabel } from "~/utils/category";
 
 const route = useRoute();
 const config = useRuntimeConfig();
 const slug = computed(() => String(route.params.slug));
 const fontSize = useCookie<number>("amroh-font", { default: () => 1.45, sameSite: "lax" });
-const showTranslation = useCookie<boolean>("amroh-arti", { default: () => true, sameSite: "lax" });
+const showTranslation = useCookie<boolean>("amroh-show-arti", { default: () => false, sameSite: "lax" });
 
 const { data, error } = await useFetch<{
   category: Category | null;
@@ -60,7 +61,7 @@ const groups = computed(() => {
   const result: { title: string | null; items: ContentSection[] }[] = [];
   for (const section of data.value?.sections || []) {
     const last = result[result.length - 1];
-    if (section.title && last && last.title === section.title) {
+    if (last && last.title === section.title) {
       last.items.push(section);
     } else {
       result.push({ title: section.title, items: [section] });
@@ -131,18 +132,21 @@ h1 {
 }
 
 .block {
-  margin: 1.2rem 0 2rem;
+  margin: 0.5rem 0 1rem;
 }
 
 .part {
   font-family: "Noto Naskh Arabic", serif;
   font-size: 1.2rem;
-  margin: 0 0 0.8rem;
+  margin: 0.7rem 0 0.35rem;
 }
 
 .verse {
-  padding: 0.85rem 0;
-  border-bottom: 1px dashed var(--line);
+  padding: 0.12rem 0;
+}
+
+.verse p {
+  margin: 0;
 }
 
 .num {
@@ -150,8 +154,15 @@ h1 {
   font-size: 0.8rem;
 }
 
+.latin {
+  margin: 0.1rem 0 0;
+  line-height: 1.4;
+  font-size: 0.92rem;
+}
+
 .arti {
-  margin: 0.35rem 0 0;
-  line-height: 1.65;
+  margin: 0.1rem 0 0.15rem;
+  line-height: 1.4;
+  font-size: 0.92rem;
 }
 </style>

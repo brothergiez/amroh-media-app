@@ -1,8 +1,8 @@
 <template>
   <article>
     <header class="group-head">
-      <p class="eyebrow">{{ category.name }}</p>
-      <h2>{{ category.name }}</h2>
+      <p class="eyebrow">{{ categoryLabel(category.name) }}</p>
+      <h2>{{ categoryLabel(category.name) }}</h2>
     </header>
     <ol class="list">
       <li v-for="item in contents" :key="item.id">
@@ -17,6 +17,7 @@
 
 <script setup lang="ts">
 import type { Category, Content } from "~/types";
+import { categoryLabel } from "~/utils/category";
 
 defineProps<{
   category: Category;
