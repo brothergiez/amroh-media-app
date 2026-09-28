@@ -4,3 +4,7 @@ backend/storage/snapshots/
 backend/.data/
 *.log
 .DS_Store
+.nuxt/
+.output/
+dist/
+
