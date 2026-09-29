@@ -2,7 +2,7 @@
   <main class="page">
     <section class="hero">
       <p class="eyebrow">Amalan · Maulid · Sholawat · Tawassul</p>
-      <h1>Kumpulan bacaan majelis ta'lim</h1>
+      <h1>Kumpulan bacaan {{ config.public.siteName }}</h1>
       <p class="lede">
         Dibaca langsung dari ponsel, dengan teks Arab yang nyaman dan terjemahan yang bisa disembunyikan.
       </p>

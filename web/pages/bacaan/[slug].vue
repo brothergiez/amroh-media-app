@@ -5,7 +5,7 @@
       <div class="tools">
         <button type="button" @click="fontSize = Math.max(1.1, Number(fontSize) - 0.1)">A-</button>
         <button type="button" @click="fontSize = Math.min(2.2, Number(fontSize) + 0.1)">A+</button>
-        <button type="button" @click="showTranslation = !showTranslation">
+        <button v-if="hasTranslation" type="button" @click="showTranslation = !showTranslation">
           {{ showTranslation ? "Sembunyikan arti" : "Tampilkan arti" }}
         </button>
       </div>
@@ -14,19 +14,14 @@
     <h1>{{ data?.content.title }}</h1>
     <p v-if="data?.content.description" class="desc">{{ data.content.description }}</p>
 
-    <section v-for="(group, index) in groups" :key="index" class="block">
-      <h2 v-if="group.title" class="part" dir="rtl">{{ group.title }}</h2>
-      <article
-        v-for="(section, i) in group.items"
-        :key="section.id"
-        class="verse"
-      >
-        <span v-if="data?.content.numbering" class="num">{{ i + 1 }}</span>
-        <p class="arabic" :style="{ fontSize: `${Number(fontSize)}rem` }">{{ section.arabic }}</p>
-        <p v-if="section.transliteration" class="latin">{{ section.transliteration }}</p>
-        <p v-if="showTranslation && section.translation" class="arti">{{ section.translation }}</p>
-      </article>
-    </section>
+    <MushafPage
+      v-if="data"
+      :slug="slug"
+      :sections="data.sections"
+      :font-size="Number(fontSize)"
+      :numbering="Boolean(data.content.numbering)"
+      :show-translation="showTranslation"
+    />
   </main>
 </template>
 
@@ -57,18 +52,9 @@ const categoryLink = computed(() =>
   data.value?.category ? `/kategori/${data.value.category.slug}` : "/",
 );
 
-const groups = computed(() => {
-  const result: { title: string | null; items: ContentSection[] }[] = [];
-  for (const section of data.value?.sections || []) {
-    const last = result[result.length - 1];
-    if (last && last.title === section.title) {
-      last.items.push(section);
-    } else {
-      result.push({ title: section.title, items: [section] });
-    }
-  }
-  return result;
-});
+const hasTranslation = computed(() =>
+  Boolean(data.value?.sections.some((item) => item.translation?.trim())),
+);
 
 const preview = computed(
   () => data.value?.sections.find((item) => item.translation)?.translation || data.value?.content.title,
@@ -125,44 +111,7 @@ h1 {
   margin: 0 0 1rem;
 }
 
-.desc,
-.latin,
-.arti {
+.desc {
   color: var(--muted);
-}
-
-.block {
-  margin: 0.5rem 0 1rem;
-}
-
-.part {
-  font-family: "Noto Naskh Arabic", serif;
-  font-size: 1.2rem;
-  margin: 0.7rem 0 0.35rem;
-}
-
-.verse {
-  padding: 0.12rem 0;
-}
-
-.verse p {
-  margin: 0;
-}
-
-.num {
-  color: var(--gold);
-  font-size: 0.8rem;
-}
-
-.latin {
-  margin: 0.1rem 0 0;
-  line-height: 1.4;
-  font-size: 0.92rem;
-}
-
-.arti {
-  margin: 0.1rem 0 0.15rem;
-  line-height: 1.4;
-  font-size: 0.92rem;
 }
 </style>

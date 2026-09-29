@@ -6,7 +6,7 @@ async function main() {
   await connectMongo();
   const app = createApp();
   app.listen(env.port, () => {
-    console.log(`Amroh API listening on http://localhost:${env.port}`);
+    console.log(`Majelis Ta'lim Al-Munawwaroh API listening on http://localhost:${env.port}`);
   });
 }
 

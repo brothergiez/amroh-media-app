@@ -5,7 +5,7 @@
         <span class="mark" aria-hidden="true">م</span>
         <span>
           <strong>{{ siteName }}</strong>
-          <small>Bacaan majelis, siap dibaca di mana saja</small>
+          <small>Lil Habib Zein bin Umar Al'Atthos</small>
         </span>
       </NuxtLink>
       <nav class="nav" aria-label="Utama">

@@ -39,7 +39,7 @@ export function createApp() {
     "/docs",
     swaggerUi.serve,
     swaggerUi.setup(openapiSpec, {
-      customSiteTitle: "Amroh API Docs",
+      customSiteTitle: "Majelis Ta'lim Al-Munawwaroh API Docs",
       swaggerOptions: {
         persistAuthorization: true,
       },

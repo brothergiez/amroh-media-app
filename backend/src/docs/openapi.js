@@ -1,7 +1,7 @@
 export const openapiSpec = {
   openapi: "3.0.3",
   info: {
-    title: "Amroh Majelis Ta'lim API",
+    title: "Majelis Ta'lim Al-Munawwaroh API",
     version: "1.0.0",
     description:
       "REST API untuk sinkronisasi konten majelis ta'lim. Endpoint `/api/v1` wajib memakai header `X-API-Key`.",
