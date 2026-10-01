@@ -1,4 +1,5 @@
-import { getCatalog } from "../utils/catalog";
+import { getCatalog, sectionsFor } from "../utils/catalog";
+import { pasalFromSections, shouldIndexPasal } from "../../utils/pasal";
 
 export default defineEventHandler(async (event) => {
   const catalog = await getCatalog();
@@ -18,6 +19,17 @@ export default defineEventHandler(async (event) => {
       changefreq: "monthly",
       priority: "0.7",
     })),
+    ...catalog.contents.flatMap((content) => {
+      const pasal = pasalFromSections(sectionsFor(catalog, content));
+      if (!shouldIndexPasal(content.content_type, pasal)) {
+        return [];
+      }
+      return pasal.map((item) => ({
+        loc: `${origin}/bacaan/${content.slug}/${item.index}`,
+        changefreq: "monthly",
+        priority: "0.6",
+      }));
+    }),
   ];
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>

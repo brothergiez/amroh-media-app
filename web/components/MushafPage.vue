@@ -4,7 +4,7 @@
     <p v-if="bismillah" class="bismillah" dir="rtl" lang="ar">{{ bismillah }}</p>
 
     <section v-for="(group, groupIndex) in groups" :key="groupIndex" class="block">
-      <h2 v-if="group.title" class="part" dir="rtl" lang="ar">{{ group.title }}</h2>
+      <h2 v-if="group.title && !hideGroupTitle" class="part" dir="rtl" lang="ar">{{ group.title }}</h2>
       <p
         v-if="numbering"
         class="body"
@@ -61,6 +61,7 @@ const props = defineProps<{
   fontSize: number;
   numbering?: boolean;
   showTranslation?: boolean;
+  hideGroupTitle?: boolean;
 }>();
 
 const parsed = computed(() =>

@@ -1,8 +1,8 @@
 <template>
-  <main class="page reader">
+  <main class="page" :class="{ reader: !showPasalIndex }">
     <header class="toolbar">
       <NuxtLink :to="categoryLink" class="back">← {{ categoryLabel(data?.category?.name) || "Kembali" }}</NuxtLink>
-      <div class="tools">
+      <div v-if="!showPasalIndex" class="tools">
         <button type="button" @click="fontSize = Math.max(1.1, Number(fontSize) - 0.1)">A-</button>
         <button type="button" @click="fontSize = Math.min(2.2, Number(fontSize) + 0.1)">A+</button>
         <button v-if="hasTranslation" type="button" @click="showTranslation = !showTranslation">
@@ -14,8 +14,18 @@
     <h1>{{ data?.content.title }}</h1>
     <p v-if="data?.content.description" class="desc">{{ data.content.description }}</p>
 
+    <ol v-if="showPasalIndex" class="list">
+      <li v-for="item in pasal" :key="item.index">
+        <NuxtLink :to="`/bacaan/${slug}/${item.index}`" class="row">
+          <span class="num">{{ item.index }}</span>
+          <span class="title" dir="rtl" lang="ar">{{ item.title }}</span>
+          <span class="go" aria-hidden="true">←</span>
+        </NuxtLink>
+      </li>
+    </ol>
+
     <MushafPage
-      v-if="data"
+      v-else-if="data"
       :slug="slug"
       :sections="data.sections"
       :font-size="Number(fontSize)"
@@ -28,6 +38,7 @@
 <script setup lang="ts">
 import type { Category, Content, ContentSection } from "~/types";
 import { categoryLabel } from "~/utils/category";
+import { pasalFromSections, shouldIndexPasal } from "~/utils/pasal";
 
 const route = useRoute();
 const config = useRuntimeConfig();
@@ -48,6 +59,11 @@ if (error.value) {
   });
 }
 
+const pasal = computed(() => pasalFromSections(data.value?.sections || []));
+const showPasalIndex = computed(() =>
+  shouldIndexPasal(data.value?.content.content_type || "single", pasal.value),
+);
+
 const categoryLink = computed(() =>
   data.value?.category ? `/kategori/${data.value.category.slug}` : "/",
 );
@@ -62,10 +78,13 @@ const preview = computed(
 
 useSeoMeta({
   title: () => `${data.value?.content.title} · ${config.public.siteName}`,
-  description: () => preview.value,
+  description: () =>
+    showPasalIndex.value
+      ? `Daftar pasal ${data.value?.content.title} di ${config.public.siteName}.`
+      : preview.value,
   ogTitle: () => `${data.value?.content.title} · ${config.public.siteName}`,
   ogDescription: () => preview.value,
-  ogType: "article",
+  ogType: "website",
   ogUrl: () => `${config.public.siteUrl}/bacaan/${slug.value}`,
 });
 
@@ -113,5 +132,49 @@ h1 {
 
 .desc {
   color: var(--muted);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.95rem 1rem;
+  border-bottom: 1px solid var(--line);
+  min-height: 3.1rem;
+}
+
+.list li:last-child .row {
+  border-bottom: 0;
+}
+
+.num {
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  min-width: 1.4rem;
+}
+
+.title {
+  flex: 1;
+  font-family: "Noto Naskh Arabic", serif;
+  font-size: 1.15rem;
+}
+
+.go {
+  color: var(--gold);
+  transform: scaleX(-1);
+}
+
+.row:active {
+  background: color-mix(in srgb, var(--gold) 10%, transparent);
 }
 </style>
